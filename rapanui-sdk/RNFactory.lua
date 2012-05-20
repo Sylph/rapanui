@@ -219,11 +219,11 @@ function RNFactory.createImageFromMoaiProp2D(image, params)
 
     o.x = left
     o.y = top
-    print ("TOP IS", params.top)
+    print ("Size of Image is", image.width, image.height)
 
     RNFactory.screen:addRNObject(o)
 
-    o.prop:setScl(1,-1)
+    --o.prop:setScl(1,-1)
     if parentGroup ~= nil then
         parentGroup:insert(o)
     end

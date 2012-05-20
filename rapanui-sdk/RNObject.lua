@@ -508,6 +508,8 @@ function RNObject:initWithMoaiProp2D(image)
     self.name = ""
     self.prop = image
     self.prop:setPriority(1)
+    self.originalHeight = image.height
+    self.originalWidth = image.width
 
     return self
 end
