@@ -201,8 +201,34 @@ function RNFactory.createImageFromMoaiImage(moaiImage, params)
         parentGroup:insert(image)
     end
 
-
     return image
+end
+
+function RNFactory.createImageFromMoaiProp2D(image, params)
+    local left = 0
+    local top = 0
+    local parentGroup = RNFactory.mainGroup
+    if params then
+        parentGroup = params.parentGroup or parentGroup
+        left = params.left or left
+        top = params.top or top
+    end
+
+    local o = RNObject:new()
+    local o = o:initWithMoaiProp2D(image)
+
+    o.x = left
+    o.y = top
+    print ("TOP IS", params.top)
+
+    RNFactory.screen:addRNObject(o)
+
+    o.prop:setScl(1,-1)
+    if parentGroup ~= nil then
+        parentGroup:insert(o)
+    end
+
+    return o
 end
 
 function RNFactory.createImage2(image, sizex, sizey)
