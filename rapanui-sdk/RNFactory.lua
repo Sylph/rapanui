@@ -244,7 +244,6 @@ function RNFactory.createImage2(image, sizex, sizey)
         parentGroup:insert(o)
     end
 
-
     return o, deck
 end
 
