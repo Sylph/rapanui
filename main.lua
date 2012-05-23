@@ -133,6 +133,15 @@ end      --]]
 --require("rapanui-samples/maps/rn-scrolling-physics-map")
 
 
+-- Atlases
+require("rapanui-samples/atlas/rn-atlas-texture-packer")
+
+
 -- These two tests have only text output
 --require("rapanui-samples/maps/rn-tiledmap-parser-xml")
 --require("rapanui-samples/maps/rn-tiledmap-parser-lua")
+
+
+
+
+

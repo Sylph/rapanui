@@ -318,6 +318,7 @@ function RNObject:innerNew(o)
         currentRefY = 0,
         isVisible = true,
         tileDeck = nil,
+        rotation = 0,
         --physic metamerge
         isPhysical = false,
         physicObject = nil,
@@ -462,15 +463,6 @@ function RNObject:loadCopyRect(src, params)
 end
 
 
---- Initializes the object with the given image path
--- @param image the path of the image to use
-function RNObject:initWith(image)
-    self.visible = true
-    self.childrenSize = 0
-
-    self.alpha = 1
-    self:loadImage(image)
-end
 
 
 function RNObject:initWithMoaiImage(moaiImage)
@@ -514,54 +506,49 @@ function RNObject:initWithMoaiProp2D(image)
     return self
 end
 
-function RNObject:loadImage(image)
-    self.name = image
-
-    self.gfxQuad = MOAIGfxQuad2D.new()
-
-    self.image = MOAIImage.new()
-    self.image:load(image, MOAIImage.TRUECOLOR + MOAIImage.PREMULTIPLY_ALPHA)
-
-    self.originalWidth, self.originalHeight = self.image:getSize()
-
-    self.image = self.image:padToPow2()
-    self.gfxQuad:setTexture(self.image)
-
-    self.pow2Width, self.pow2Height = self.image:getSize()
-
-    self.prop = MOAIProp2D.new()
-
-    local u = self.originalWidth / self.pow2Width
-    local v = self.originalHeight / self.pow2Height
-
-    self.gfxQuad:setUVRect(0, 0, u, v)
-
-
-    self.prop:setDeck(self.gfxQuad)
-    self.gfxQuad:setRect(-self.originalWidth / 2, -self.originalHeight / 2, (self.originalWidth) / 2, (self.originalHeight) / 2)
-    self.prop:setPriority(1)
-end
-
 function RNObject:initWithImage2(image)
 
     local deck = image
+    local numberInAtlas
+
     if type(image) == "string" then
         if RNGraphicsManager:getAlreadyAllocated(image) then
-            deck = RNGraphicsManager:getDeckByPath(image)
+            deck, numberInAtlas = RNGraphicsManager:getDeckByPath(image)
         else
             deck = RNGraphicsManager:allocateDeck2DGfx(image)
         end
     end
 
 
-    self.originalWidth = RNGraphicsManager:getGfxByPath(image).width
-    self.originalHeight = RNGraphicsManager:getGfxByPath(image).height
+    if RNGraphicsManager:getGfxByPath(image).isInAtlas then
+        self.originalWidth = RNGraphicsManager:getGfxByPath(image).sizes[numberInAtlas].w
+        self.originalHeight = RNGraphicsManager:getGfxByPath(image).sizes[numberInAtlas].h
+    else
+        self.originalWidth = RNGraphicsManager:getGfxByPath(image).width
+        self.originalHeight = RNGraphicsManager:getGfxByPath(image).height
+    end
 
 
     self.name = ""
     self.prop = MOAIProp2D.new()
     self.prop:setDeck(deck)
     self.prop:setPriority(1)
+    if RNGraphicsManager:getGfxByPath(image).isInAtlas then
+        self.prop:setIndex(numberInAtlas)
+        self.scaleX = 1
+        self.scaleY = 1
+        self.isAnim = true
+        --we check for default sequence frame Order
+        local defaultFrameOrder = {
+            1
+        }
+
+        --we create a new sequence
+        self:newSequence("default", defaultFrameOrder, 12, 1, nil)
+        --and set it as current
+        self.currentSequence = "default"
+        self.frame = numberInAtlas
+    end
 
     return self, deck
 end
@@ -578,8 +565,7 @@ function RNObject:initWithAnim2(image, sx, sy, scaleX, scaleY)
             deck = RNGraphicsManager:allocateTileDeck2DGfx(image, sx, sy, scaleX, scaleY)
         end
     else
-        path=RNGraphicsManager:getGfxByDeck(deck)
-        print(path)
+        path = RNGraphicsManager:getGfxByDeck(deck)
     end
 
 
@@ -704,14 +690,6 @@ function RNObject:getDebugName()
 end
 
 
-function RNObject:initAnimWith(image, sx, sy, scaleX, scaleY)
-    self.visible = true
-    self.childrenSize = 0
-
-    self.alpha = 1
-    self:loadAnim(image, sx, sy, scaleX, scaleY)
-end
-
 
 function RNObject:setIDInGroup(id)
     self.idInGroup = id
@@ -724,109 +702,6 @@ end
 
 function RNObject:setIDInScreen(id)
     self.idInScreen = id
-end
-
-
-function RNObject:loadAnim(image, sx, sy, scaleX, scaleY)
-    self.name = image
-
-
-    self.tileDeck = MOAITileDeck2D.new()
-
-
-    self.image = MOAIImage.new()
-    self.image:load(image, MOAIImage.TRUECOLOR + MOAIImage.PREMULTIPLY_ALPHA)
-    -- self.image = self.image:padToPow2()
-    self.originalWidth, self.originalHeight = self.image:getSize()
-
-
-    self.image = self.image:padToPow2()
-
-
-    local oWnotPadded = self.originalWidth
-    local oHnotPadded = self.originalHeight
-
-
-    self.originalWidth, self.originalHeight = self.image:getSize()
-
-
-    self.tileDeck:setTexture(self.image)
-    local px = self.originalWidth / sx
-    local py = self.originalHeight / sy
-    --self.tileDeck:setSize(number width, number height [, number cellWidth, number cellHeight, number xOff, number yOff, number tileWidth, number tileHeight ] )
-    self.tileDeck:setSize(px, py, 1 / px, 1 / py, 0, 0, 1 / px, 1 / py)
-    self.prop = MOAIProp2D.new()
-    self.prop:setIndex(1)
-
-    self.prop:setDeck(self.tileDeck)
-
-    local oW = self.originalWidth
-    local oH = self.originalHeight
-
-    --self.tileDeck:setRect(-sx * scaleX / 2, sy * scaleY / 2, sx * scaleX / 2, -sy * scaleY / 2)
-    self.tileDeck:setRect(-sx * scaleX, sy * scaleY, sx * scaleX, -sy * scaleY)
-    self.originalWidth = sx * scaleX * 2
-    self.originalHeight = sy * scaleY * 2
-    self.scaleX = scaleX
-    self.scaleY = scaleY
-    self.sizex = sx
-    self.sizey = sy
-    self.isAnim = true
-    self.frameNumberTotal = oW / sx * oH / sy
-
-    --we check for default sequence frame Order
-    local defaultFrameOrder = {}
-    for j = 1, self.frameNumberTotal, 1 do defaultFrameOrder[j] = j end
-    --we create a new sequence
-    self:newSequence("default", defaultFrameOrder, 12, 1, nil)
-    --and set it as current
-    self.currentSequence = "default"
-    self.frame = 1
-    self.tmplistener = RNListeners:addEventListener("enterFrame", self)
-end
-
-function RNObject:enterFrame(event)
-    --takes self as himself
-    self = self.source
-    --uptades counter
-    self.animCounter = self.animCounter + 1
-    --if it's not paused
-    if self.pause == false then
-        --we check for the right sequence to play
-        local rightSequenceToPlay = nil
-        if self.sequenceList ~= nil then
-            for i = 1, table.getn(self.sequenceList), 1 do
-                if self.sequenceList[i].name == self.currentSequence then rightSequenceToPlay = i end
-            end
-        end
-        local rightSequence = self.sequenceList[rightSequenceToPlay]
-        --if the counter reachs the sequence speed
-        if self.animCounter == rightSequence.speed then
-            --we check for the next sequence's frame to play
-            local nextSequenceFrame
-            if rightSequence.frameOrder[rightSequence.currentFrame + 1] ~= nil then
-                nextSequenceFrame = rightSequence.frameOrder[rightSequence.currentFrame + 1]
-                rightSequence.currentFrame = rightSequence.currentFrame + 1
-            else
-                nextSequenceFrame = rightSequence.frameOrder[1]
-                rightSequence.currentFrame = 1
-            end
-            --we upgrade the sequence repeated times, if it is not -1 (infinite loop)
-            if rightSequence.reapeatTimes ~= -1 then rightSequence.timeRepeated = rightSequence.timeRepeated + 1 end
-            --the object goes to the right frame
-            self.frame = nextSequenceFrame
-            --the counter goes back to 0
-            self.animCounter = 0
-            --if we have repeated the sequence enough (-1 to stop on the last frame)
-            if rightSequence.timeRepeated == table.getn(rightSequence.frameOrder) * rightSequence.repeatTimes - 1 then
-                self.pause = true
-                if rightSequence.onStop ~= nil then
-                    local funct = rightSequence.onStop
-                    funct()
-                end
-            end
-        end
-    end
 end
 
 function RNObject:animate(keyframe, executed, value)
@@ -846,18 +721,22 @@ function RNObject:animate(keyframe, executed, value)
     --set current Frame of animation
     self.frame = rightSequence.frameOrder[keyframe]
     --if we meet execution times
-    if executed + 1 >= rightSequence.repeatTimes and executed + 1 >= table.getn(rightSequence.frameOrder) then
-        --stop and deallocate timer
-        self.timer:stop()
-        self.timer = nil
-        --get right sequence from list
-        local rightSequence = self.sequenceList[rightSequenceToPlay]
-        --call onEnd function
-        if rightSequence.onStop ~= nil then
-            local funct = rightSequence.onStop
-            funct()
+    --print(executed, rightSequence.repeatTimes, #rightSequence.frameOrder)
+    if rightSequence.repeatTimes ~= -1 then
+        if executed >= rightSequence.repeatTimes then
+            --print("stopped")
+            --stop and deallocate timer
+            self.timer:stop()
+            self.timer = nil
+            --get right sequence from list
+            local rightSequence = self.sequenceList[rightSequenceToPlay]
+            --call onEnd function
+            if rightSequence.onStop ~= nil then
+                local funct = rightSequence.onStop
+                funct()
+            end
+            --stops animation
         end
-        --stops animation
     end
 end
 
@@ -895,7 +774,7 @@ function RNObject:play(sequenceName, speed, repeatTimes, onStop)
     local rightSequence = self.sequenceList[rightSequenceToPlay]
     --set sequence values
     rightSequence.timeRepeated = 0
-    rightSequence.currentFrame = 1
+    rightSequence.currentFrame = 0
     if speed ~= nil then rightSequence.speed = speed end
     if repeatTimes ~= nil then rightSequence.repeatTimes = repeatTimes end
     if onStop ~= nil then rightSequence.onStop = onStop end
@@ -907,7 +786,7 @@ function RNObject:play(sequenceName, speed, repeatTimes, onStop)
 
     --create new timer and stop
     self.timer = MOAITimer.new()
-    self.timer:setMode(MOAITimer.LOOP)
+    self.timer:setMode(MOAITimer.CONTINUE)
     --create new curve
     self.curve = MOAIAnimCurve.new()
     --assign the curve to the timer
