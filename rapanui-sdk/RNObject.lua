@@ -35,6 +35,13 @@ local function fieldChangedListener(self, key, value)
         self:setVisible(value)
     end
 
+    if key ~= nil and key == "scaleX" then
+        self:setScaleX(value)
+    end
+    if key ~= nil and key == "scaleY" then
+        self:setScaleY(value)
+    end
+
     if self.isAnim == true then
 
         if key ~= nil and key == "sizex" then
@@ -43,12 +50,6 @@ local function fieldChangedListener(self, key, value)
 
         if key ~= nil and key == "sizey" then
             self:setTileSizeY(value)
-        end
-        if key ~= nil and key == "scalex" then
-            self:setTileScaleX(value)
-        end
-        if key ~= nil and key == "scaley" then
-            self:setTileScaleY(value)
         end
         if key ~= nil and key == "frame" then
             self.prop:setIndex(value)
@@ -319,6 +320,7 @@ function RNObject:innerNew(o)
         isVisible = true,
         tileDeck = nil,
         rotation = 0,
+        touchable = false,
         --physic metamerge
         isPhysical = false,
         physicObject = nil,
@@ -535,8 +537,7 @@ function RNObject:initWithImage2(image)
     self.prop:setPriority(1)
     if RNGraphicsManager:getGfxByPath(image).isInAtlas then
         self.prop:setIndex(numberInAtlas)
-        self.scaleX = 1
-        self.scaleY = 1
+
         self.isAnim = true
         --we check for default sequence frame Order
         local defaultFrameOrder = {
@@ -550,6 +551,9 @@ function RNObject:initWithImage2(image)
         self.frame = numberInAtlas
     end
 
+    self.scaleX = 1
+    self.scaleY = 1
+
     return self, deck
 end
 
@@ -562,7 +566,7 @@ function RNObject:initWithAnim2(image, sx, sy, scaleX, scaleY)
         if RNGraphicsManager:getAlreadyAllocated(image) then
             deck = RNGraphicsManager:getDeckByPath(image)
         else
-            deck = RNGraphicsManager:allocateTileDeck2DGfx(image, sx, sy, scaleX, scaleY)
+            deck = RNGraphicsManager:allocateTileDeck2DGfx(image, sx, sy)
         end
     else
         path = RNGraphicsManager:getGfxByDeck(deck)
@@ -578,14 +582,16 @@ function RNObject:initWithAnim2(image, sx, sy, scaleX, scaleY)
 
 
     self.prop:setDeck(deck)
-    self.tileDeck = deck
+    self.deck = deck
 
-
-
-    self.originalWidth = sx * scaleX * 2
-    self.originalHeight = sy * scaleY * 2
+    self.originalWidth = sx * scaleX
+    self.originalHeight = sy * scaleY
+    self.originalScaleX = scaleX
+    self.originalScaleY = scaleY
     self.scaleX = scaleX
     self.scaleY = scaleY
+    self:setScaleX(scaleX)
+    self:setScaleY(scaleY)
     self.sizex = sx
     self.sizey = sy
     self.isAnim = true
@@ -856,11 +862,11 @@ function RNObject:removeSequence(name)
 end
 
 function RNObject:flipHorizontal()
-    self.scalex = -1
+    self.scaleX = -self.scaleX
 end
 
 function RNObject:flipVertical()
-    self.scaley = -1
+    self.scaleY = -self.scaleY
 end
 
 function RNObject:setTileSizeX(value)
@@ -898,13 +904,26 @@ function RNObject:putOver(object)
 end
 
 function RNObject:setTileScaleX(value)
-    self.originalWidth = (self.originalWidth / 2 / self.scaleX / self.sizex) * value * 2 * self.sizex
-    self.tileDeck:setRect(self.originalWidth / 2, self.originalHeight / 2, -self.originalWidth / 2, -self.originalHeight / 2)
+    self.originalWidth = self.originalWidth * value
+    self.deck:setRect(-self.originalWidth / 2, self.originalHeight / 2, self.originalWidth / 2, -self.originalHeight / 2)
 end
 
 function RNObject:setTileScaleY(value)
-    self.originalHeight = (self.originalHeight / 2 / self.scaleY / self.sizey) * value * 2 * self.sizey
-    self.tileDeck:setRect(self.originalWidth / 2, self.originalHeight / 2, -self.originalWidth / 2, -self.originalHeight / 2)
+    self.originalHeight = self.originalHeight * value
+    self.deck:setRect(-self.originalWidth / 2, self.originalHeight / 2, self.originalWidth / 2, -self.originalHeight / 2)
+end
+
+
+function RNObject:setScaleX(value)
+    local xs, ys = self.prop:getScl()
+    self.prop:setScl(value, ys)
+    self.originalWidth = self.originalWidth * value
+end
+
+function RNObject:setScaleY(value)
+    local xs, ys = self.prop:getScl()
+    self.prop:setScl(xs, value)
+    self.originalHeight = self.originalHeight * value
 end
 
 function RNObject:getChildren()
@@ -1079,9 +1098,9 @@ end
 function RNObject:setTouchable(value)
 
     if value then
-        self:getProp().touchable = true
+        self.touchable = true
     else
-        self:getProp().touchable = false
+        self.touchable = false
     end
 end
 
@@ -1241,6 +1260,15 @@ function RNObject:remove()
     if (self.parentGroup) then
         self.parentGroup:removeChild(self.idInGroup)
     end
+    if self.font ~= nil then
+        self.font = nil
+    end
+    self.prop:setDeck(nil)
+    self.prop = nil
+    self.deck = nil
+    self.tileDeck = nil
+    self = nil
+    collectgarbage()
 end
 
 --if it's awake (returns boolean)

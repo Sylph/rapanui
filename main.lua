@@ -30,20 +30,29 @@ end      --]]
 
 -- Anim
 
---require("rapanui-samples/anim/rn-anim")
+ --require("rapanui-samples/anim/rn-anim")
 --require("rapanui-samples/anim/rn-anim2")
 
 -- Basics
 
 --require("rapanui-samples/basic/rn-images")
 --require("rapanui-samples/basic/rn-images-rotate")
+require("rapanui-samples/basic/rn-images-scale")
 --require("rapanui-samples/basic/rn-levels")
 --require("rapanui-samples/basic/rn-text")
 --require("rapanui-samples/basic/rn-shapes")
 --require("rapanui-samples/basic/rn-shapes-penColor")
---require("rapanui-samples/basic/rn-rnListView")
---require("rapanui-samples/basic/rn-rnPageSwipe")
+--require("rapanui-samples/basic/rn-deallocate")
 
+-- Lists
+
+--require("rapanui-samples/lists/rn-rnListView")
+--require("rapanui-samples/lists/rn-rnPageSwipe")
+
+
+-- Menu
+--require("rapanui-samples/menu/rn-menu-director")
+--require("rapanui-samples/menu/rn-menu-popup")
 
 
 -- Landscape
@@ -76,6 +85,11 @@ end      --]]
 --require("rapanui-samples/transition/rn-transition-move")
 --require("rapanui-samples/transition/rn-transition-rotate")
 --require("rapanui-samples/transition/rn-transition-scale")
+
+--require("rapanui-samples/transition/rn-transition-text-move")
+--require("rapanui-samples/transition/rn-transition-text-alpha")
+--require("rapanui-samples/transition/rn-transition-text-scale")
+--require("rapanui-samples/transition/rn-transition-text-rotate")
 
 --NOTE: now only works on simple 2D maps, still buggy with physics maps
 --require("rapanui-samples/transition/rn-transition-map-alpha")
@@ -125,6 +139,7 @@ end      --]]
 -- Maps
 
 --require("rapanui-samples/maps/rn-basic-map")
+--require("rapanui-samples/maps/rn-basic-map-properties")
 --require("rapanui-samples/maps/rn-basic-map-alpha")
 --require("rapanui-samples/maps/rn-scrolling-map")
 --require("rapanui-samples/maps/rn-tileset")
@@ -134,14 +149,10 @@ end      --]]
 
 
 -- Atlases
-require("rapanui-samples/atlas/rn-atlas-texture-packer")
+--require("rapanui-samples/atlas/rn-atlas-texture-packer")
 
 
 -- These two tests have only text output
 --require("rapanui-samples/maps/rn-tiledmap-parser-xml")
 --require("rapanui-samples/maps/rn-tiledmap-parser-lua")
-
-
-
-
 

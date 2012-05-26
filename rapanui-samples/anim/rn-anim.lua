@@ -15,12 +15,8 @@
 background = RNFactory.createImage("images/background-purple.png")
 
 
---spritesheetlilia = RNFactory.createImage("images/lilia.png")
---spritesheetlilia.x = 48
---spritesheetlilia.y = 64
 
-
-liliaChar = RNFactory.createAnim("images/lilia.png", 32, 32, 140, 50, 1, 1)
+liliaChar = RNFactory.createAnim("images/lilia.png", 32, 32, 140, 50, 2, 2)
 
 function onEndS1()
     liliaChar:play("walkBack")
@@ -46,18 +42,30 @@ liliaChar:newSequence("walkRight", { 7, 8, 9, 8 }, 6, 2, onEndS4)
 
 liliaChar:play("walkFront")
 liliaChar.frame = 1
---spritesheetlilia.x = 50
---spritesheetlilia.y = 100
 
 
---simple animation which plays the default sequence
---ektorspritesheet = RNFactory.createImage("images/ektor.png")
-
---ektorspritesheet.x = 48
---ektorspritesheet.y = 250
 
 
 ektorChar = RNFactory.createAnim("images/ektor.png", 32, 32)
+ektorChar2 = RNFactory.createAnim("images/ektor.png", 32, 32)
+ektorChar3 = RNFactory.createAnim("images/ektor.png", 32, 32)
+ektorChar2.x = 100
+ektorChar2.y = 100
+ektorChar3.x = 164
+ektorChar3.y = 100
+ektorChar2.scaleX = -4
+ektorChar2.scaleY = -4
+ektorChar2.scaleX = -2
+ektorChar2.scaleY = -2
+ektorChar2.scaleX = 1
+ektorChar2.scaleY = 1
+ektorChar2.scaleX = 3
+ektorChar2.scaleY = 3
+ektorChar2.scaleX = 1
+ektorChar2.scaleY = 1
+ektorChar2.scaleX = -0.5
+ektorChar2.scaleY = -0.5
+
 
 
 function onEndSEktor()
@@ -71,10 +79,6 @@ ektorChar:newSequence("walkFront", { 1, 2, 3, 2 }, 6, 10, onEndSEktor)
 
 ektorChar.x = 200
 ektorChar.y = 250
-
-
-ektorChar.scalex = 2
-ektorChar.scaley = 2
 
 
 ektorChar:flipHorizontal()

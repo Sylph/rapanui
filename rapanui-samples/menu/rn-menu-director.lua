@@ -12,11 +12,17 @@
 -- Moai (http://getmoai.com/) and RapaNui in the credits of your program.
 ]]
 
--- tiles by Daniel Cook (http://www.lostgarden.com)
 
-local map = RNMapFactory.loadMap(RNMapFactory.TILED, "rapanui-samples/maps/rpgmap.tmx")
 
-local aTileset = map:getTileset(0)
-aTileset:updateImageSource("rapanui-samples/maps/rpgtileset.png")
+--setting up director
+director = RNDirector:new()
 
-map:drawMapAt(0, 0, aTileset)
+
+director:addScene("rapanui-samples/menu/scene1m")
+director:addScene("rapanui-samples/menu/scene2m")
+director:addScene("rapanui-samples/menu/scene3m")
+director:addScene("rapanui-samples/menu/scene4m")
+
+--show scene1m with fade in
+
+director:showScene("rapanui-samples/menu/scene1m","fade")

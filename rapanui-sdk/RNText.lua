@@ -18,7 +18,7 @@ RNText = RNObject:innerNew()
 
 local function fieldChangedListenerRNText(self, key, value)
 
-    getmetatable(self).__index[key] = value
+    getmetatable(self).__object[key] = value
 
     if key ~= nil and key == "x" then
         local tmpX = value
@@ -50,6 +50,25 @@ local function fieldChangedListenerRNText(self, key, value)
 end
 
 
+local function fieldAccessListener(self, key)
+
+    local object = getmetatable(self).__object
+
+    if key ~= nil and key == "x" then
+        local xx, yy
+        xx, yy = object:getProp():getLoc()
+        object.x = xx
+    end
+
+    if key ~= nil and key == "x" then
+        local xx, yy
+        xx, yy = object:getProp():getLoc()
+        object.y = yy
+    end
+
+    return getmetatable(self).__object[key]
+end
+
 function RNText:innerNew(o)
     o = o or {}
     setmetatable(o, self)
@@ -60,12 +79,13 @@ end
 -- Create a new proxy for RNText Object
 function RNText:new(o)
     local RNText = RNText:innerNew()
-    local proxy = setmetatable({}, { __newindex = fieldChangedListenerRNText, __index = RNText })
+    local proxy = setmetatable({}, { __newindex = fieldChangedListenerRNText, __index = fieldAccessListener, __object = RNText })
     return proxy
 end
 
 
-function RNText:initWithText2(text, font, size, x, y, width, height, alignment)
+
+function RNText:initWithText2(text, font, size, width, height, alignment)
     self.charcodes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-'
 
     self.fontName = font
@@ -78,8 +98,6 @@ function RNText:initWithText2(text, font, size, x, y, width, height, alignment)
             font = RNGraphicsManager:allocateFont(font, self.charcodes, size, 163)
         end
     end
-
-    print(font)
 
     self.font = font
 
@@ -100,7 +118,7 @@ function RNText:initWithText2(text, font, size, x, y, width, height, alignment)
     self.textbox:setString(self.text)
     self.textbox:setFont(self.font)
     self.textbox:setTextSize(size, 163)
-    self.textbox:setRect(x, y, x + width, y + height)
+    self.textbox:setRect(0, 0, width, height)
     self.textbox:setAlignment(alignment)
 
     self:setTextColor(255, 255, 255)
@@ -123,6 +141,10 @@ end
 
 function RNText:setText(text)
     self.textbox:setString(text)
+end
+
+function RNText:getType()
+    return "RNText"
 end
 
 

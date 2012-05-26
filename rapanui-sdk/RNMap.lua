@@ -214,6 +214,16 @@ function RNMap:getFirstObjectGroupByName(name)
     return nil
 end
 
+function RNMap:getLayerByName(name)
+    for i = 0, #self.layers do
+        if self.layers[i].name == name then
+            return self.layers[i]
+        end
+    end
+
+    return false
+end
+
 
 function RNMap:getLoc()
     return self.mapx, self.mapy
@@ -264,6 +274,20 @@ function RNMap:remove()
         local layer = self.layers[i]
         layer:remove()
     end
+
+    for i, v in pairs(self.tilesets) do
+        v:remove()
+        v = nil
+    end
+    self.layersSize = nil
+    self.objectgroupsSize = nil
+    self.tilesetsSize = nil
+    self.propertiesSize = nil
+    self.objectgroups = nil
+    self.tilesets = nil
+    self.layers = nil
+    self = nil
+    collectgarbage()
 end
 
 function RNMap:getDelta(a, b)
