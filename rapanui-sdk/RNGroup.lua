@@ -120,9 +120,9 @@ function RNGroup:new(o)
 end
 
 
-function RNGroup:setAlpha()
+function RNGroup:setAlpha(value)
     for i, v in ipairs(self:getAllNonGroupChildren()) do
-        v:setAlpha(0)
+        v:setAlpha(value)
     end
 end
 
@@ -212,10 +212,12 @@ function RNGroup:insert(object, resetTransform)
 
         local level = self:getHighestLevel() + 1
 
+
         object.xInGroup = object.x
         object.yInGroup = object.y
 
         object:setLevel(level)
+
 
         self.levels[level] = level
 

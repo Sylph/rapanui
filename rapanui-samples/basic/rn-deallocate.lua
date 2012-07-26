@@ -22,6 +22,7 @@
 
 --uncomment this whole block to see how to remove an image asset from memory
 --create an image
+--[[
 image = RNFactory.createImage("images/tile0.png", { left = 100 })
 
 
@@ -35,11 +36,49 @@ function t(event)
 end
 
 RNListeners:addEventListener("touch", t)
+]]--
+
+--uncomment this whole block to see how to remove a set of images for RNButtons assets from memory
+--create a button
+function button1TouchDown(event)
+    event.target:setText("Button 1 touch down!")
+end
+
+function button1UP(event)
+    event.target:setText("Button 1 touch up")
+end
+
+button = RNFactory.createButton("images/button-plain.png", {
+    text = "Main Button 1",
+    imageOver = "images/button-over.png",
+    size = 8,
+    width = 200,
+    height = 50,
+    onTouchDown = button1TouchDown,
+    onTouchUp = button1UP
+})
 
 
+function t(event)
+    if event.phase == "began" then
+        --onTouch we remove object, asset and create a new button
+        button:remove()
+        RNFactory.removeAsset("images/button-plain.png")
+        RNFactory.removeAsset("images/button-over.png")
+        RNFactory.removeAsset("arial-rounded.TTF")
+        button = RNFactory.createButton("images/button-plain.png", {
+            text = "Main Button 1",
+            imageOver = "images/button-over.png",
+            size = 8,
+            width = 200,
+            height = 50,
+            onTouchDown = button1TouchDown,
+            onTouchUp = button1UP
+        })
+    end
+end
 
-
-
+RNListeners:addEventListener("touch", t)
 
 --uncomment this whole block to see how to remove an animation asset from memory
 --[[
@@ -89,21 +128,20 @@ RNListeners:addEventListener("touch", t)
 --uncomment this whole block to see how to remove a font asset from memory
 --create a text
 --[[
-text1 = RNFactory.createText("Hello world!", { font = "arial-rounded", size = 10, top = 5, left = 5, width = 200, height = 50 })
+text1 = RNFactory.createText("Hello world!", { font = "arial-rounded.TTF", size = 10, top = 5, left = 5, width = 200, height = 50 })
 
 --MOAI BUG: FONTS ARE NOT FREED FROM MEMORY
 function t(event)
     if event.phase == "began" then
         --onTouch we remove text, font and create a new text
         text1:remove()
-        RNFactory.removeAsset("arial-rounded")
-        text1 = RNFactory.createText("Hello world!", { font = "arial-rounded", size = 10, top = 5, left = 5, width = 200, height = 50 })
+        RNFactory.removeAsset("arial-rounded.TTF")
+        text1 = RNFactory.createText("Hello world!", { font = "arial-rounded.TTF", size = 10, top = 5, left = 5, width = 200, height = 50 })
     end
 end
 
 RNListeners:addEventListener("touch", t)
-]] --
-
+]]--
 
 
 
