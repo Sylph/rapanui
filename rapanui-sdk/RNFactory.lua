@@ -79,6 +79,12 @@ function RNFactory.init()
     RNFactory.outWidth = RNFactory.width
     RNFactory.outHeight = RNFactory.height
 
+    RNFactory.screenXOffset = 0
+    RNFactory.screenYOffset = 0
+
+    RNFactory.screenUnitsX = 0
+    RNFactory.screenUnitsY = 0
+
     --if we have to stretch graphics to screen
 
     if config.stretch == true then
@@ -120,6 +126,12 @@ function RNFactory.init()
 
         RNFactory.outWidth = config.graphicsDesign.w
         RNFactory.outHeight = config.graphicsDesign.h
+
+        RNFactory.screenXOffset = SCREEN_X_OFFSET
+        RNFactory.screenYOffset = SCREEN_Y_OFFSET
+
+        RNFactory.screenUnitsX = SCREEN_UNITS_X
+        RNFactory.screenUnitsY = SCREEN_UNITS_Y
     end
 
 
@@ -216,6 +228,8 @@ function RNFactory.createButton(image, params)
 
     local top, left, size, font, vAlignment, hAlignment
 
+    local xOffset, yOffset = 0, 0
+
     font = "arial-rounded.TTF"
     size = 15
 
@@ -274,6 +288,14 @@ function RNFactory.createButton(image, params)
         if (params.horizontalAlignment ~= nil) then
             hAlignment = params.horizontalAlignment
         end
+    end
+
+    if (params.xOffset ~= nil) then
+        xOffset = params.xOffset
+    end
+
+    if (params.yOffset ~= nil) then
+        yOffset = params.yOffset
     end
 
     -- init of default RNButtonImage
@@ -337,8 +359,10 @@ function RNFactory.createButton(image, params)
 
 
     local rnButton = RNButton:new()
-
+    rnButton.xOffset = xOffset
+    rnButton.yOffset = yOffset
     rnButton:initWith(rnButtonImage, rnButtonImageOver, rnButtonImageDisabled, rnText)
+
 
     if parentGroup ~= nil then
         parentGroup:insert(rnButton)
@@ -356,6 +380,8 @@ function RNFactory.createButton(image, params)
     if params.onTouchDown ~= nil then
         rnButton:setOnTouchDown(params.onTouchDown)
     end
+
+
     return rnButton, deck
 end
 
