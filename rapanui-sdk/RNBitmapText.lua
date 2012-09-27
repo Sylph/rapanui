@@ -224,7 +224,7 @@ function RNBitmapText:printText(text, left, top, charWidth, charHeight)
         aChar.y = self.y
         aChar.x = currentx
         self:insert(aChar)
-        currentx = currentx + 16
+        currentx = currentx + charWidth
     end
 
     self.text = text
