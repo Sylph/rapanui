@@ -13,7 +13,7 @@
 ]]
 
 local background = RNFactory.createImage("images/background-blue.png")
-local toEnable = true
+local toShow = true
 
 function button1TouchDown(event)
     text:setText("Main Button touch down!")
@@ -29,7 +29,7 @@ mainButton = RNFactory.createButton("images/button-plain.png", {
     imageDisabled = "images/button-disabled.png",
     top = 50,
     left = 10,
-    size = 16,
+    size = 22,
     width = 200,
     height = 50,
     onTouchDown = button1TouchDown,
@@ -40,36 +40,31 @@ mainButton = RNFactory.createButton("images/button-plain.png", {
 -- second button to show different text alignments
 
 button2 = RNFactory.createButton("images/button-plain.png", {
-    text = "Disable Main Button",
+    text = "Hide Main Button",
     top = 150,
     left = 10,
-    size = 16,
+    size = 22,
     width = 200,
     height = 50
 })
 
-function button4TouchDown(event)
-    event.target:setText("Button 4 touched!")
-end
-
-function button4UP(event)
-    event.target:setText("")
-end
 
 
 text = RNFactory.createText("Touch on buttons 1", { size = 18, top = 400, left = 5, width = 250, height = 50 })
 
 
+
+
 function button2UP(event)
-    if toEnable == true then
-        button2:setText("Enabled Main Button")
-        mainButton:disable()
-        toEnable = false
+    if toShow == true then
+        button2:setText("View Main Button")
+        mainButton:setVisible(false)
+        toShow = false
 
     else
-        button2:setText("Disabled Main Button")
-        mainButton:enable()
-        toEnable = true
+        button2:setText("Hide Main Button")
+        mainButton:setVisible(true)
+        toShow = true
     end
 end
 

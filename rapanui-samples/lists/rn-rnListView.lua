@@ -17,9 +17,6 @@
 
 --NOTE1: at the moment the scrolling gesture is only vertical.
 --NOTE2: the touch is got when a cell is touched, not when the object is.
---NOTE3: since RapaNui touch listener doesn't return the target as the enterFrame does,
---       we need to specify SELF in RNListView.lua, and due to this fact
---       only one RNList at once can be created.
 
 --object creation
 local image2 = RNFactory.createImage("images/image2.png")
@@ -36,8 +33,8 @@ local image12 = RNFactory.createImage("images/tile7.png")
 local image13 = RNFactory.createImage("images/tile8.png")
 local image14 = RNFactory.createImage("images/tile9.png")
 local anim1 = RNFactory.createAnim("images/char.png", 42, 32, 100, 200, 1, 2); anim1:play("default", 12, -1)
-local text1 = RNFactory.createText("RapaNui is great!", { size = 10, top = 5, left = 5, width = 200, height = 50 })
-local text2 = RNFactory.createText("Moai is great!", { size = 10, top = 5, left = 5, width = 200, height = 50 })
+local text1 = RNFactory.createText("RapaNui is great!", { size = 20, top = 5, left = 5, width = 200, height = 50 })
+local text2 = RNFactory.createText("Moai is great!", { size = 20, top = 5, left = 5, width = 200, height = 50 })
 
 
 
@@ -66,7 +63,7 @@ end
 local button = RNFactory.createButton("images/button-plain.png", {
     text = "Main Button 1",
     imageOver = "images/button-over.png",
-    size = 8,
+    size = 16,
     width = 200,
     height = 50,
     onTouchDown = button1TouchDown,
@@ -95,7 +92,10 @@ image1c.x = 80
 
 
 --callback for touch
-function getCallBack(event)
+function getCallBack(event, touchEvent)
+    --touchEvent is the basic touch event
+    print(touchEvent.x, touchEvent.y, touchEvent.id, touchEvent.tapCount)
+    --event is the special one
     for i, v in pairs(event) do print(i, v, v.object.name, v.userValue, v.userValue2) end
 end
 
@@ -116,7 +116,7 @@ end
 --maxScrollingForceY,minY and maxY affect directly the scrolling gesture.
 
 local list = RNFactory.createList("testList", {
-    options = { timestep = 1 / 60, cellH = 64, cellW = 64, maxScrollingForceY = 30, minY = -64 * 8 - 32, maxY = 0, touchStartX = 0, touchStartY = 0, touchW = 320, touchH = 480 }, --minY=-64*6 means it can move down 6 cells since they are 64 in height
+    options = { checkElements = false, topLimit = -100, bottomLimit = 480 + 100, timestep = 1 / 60, cellH = 64, cellW = 64, maxScrollingForceY = 30, minY = -64 * 8 - 32, maxY = 0, touchStartX = 0, touchStartY = 0, touchW = 320, touchH = 480 }, --minY=-64*6 means it can move down 6 cells since they are 64 in height
     canScrollY = true,
     x = 0,
     y = 0,
@@ -174,6 +174,8 @@ list:swapElements(13, 14)
 list:jumpToElement(2)
 --get list total height
 print(list:getTotalHeight())
+--list limit
+list.options.limit = 90
 
 
 
@@ -202,3 +204,8 @@ end
 local regID = list:registerFunction(onListCallBack)
 --so we can remove the registered function
 --swipeObject:removeRegisteredFunction(regID)
+
+--checkElements , while active will perform movement checks only for objects inside topLimit and bottomLimit bounding
+list.options.checkElements = true
+list.options.topLimit = -100
+list.options.bottomLimit = 480 + 100

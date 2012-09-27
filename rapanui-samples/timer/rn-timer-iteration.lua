@@ -12,19 +12,16 @@
 -- Moai (http://getmoai.com/) and RapaNui in the credits of your program.
 ]]
 
-local background = RNFactory.createImage("images/background-blue.png")
+times = 0
+local background = RNFactory.createImage("images/background-purple.png")
 
-text = RNFactory.createText("Hello world!", { size = 20, top = 50, left = 50, width = 200, height = 50 })
+local iterations = 10
 
-trn = RNTransition:new()
+text = RNFactory.createText("Gone run: ", { size = 20, top = 5, left = 5, width = 200, height = 50 })
 
-function first()
-    trn:run(text, { type = "rotate", time = 3000, angle = 90, onComplete = second })
+local function count()
+    times = times + 1
+    text:setText("Gone run: " .. times)
 end
 
-function second()
-    trn:run(text, { type = "rotate", time = 3000, angle = -90, onComplete = first })
-end
-
-first()
-
+local actionId = RNMainThread.addTimedAction(0.5, count, iterations)

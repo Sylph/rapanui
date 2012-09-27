@@ -14,12 +14,6 @@
 
 RNPageSwipe = {}
 
-local SELF
-
---since RapaNui touch listener doesn't return the target as the enterFrame does(but not returns self!),
---we need to specify SELF here, and due to this fact
---only one RNPageSwipe at once can be created  TODO: fix this.
-
 
 local function fieldChangedListener(self, key, value)
 
@@ -48,7 +42,7 @@ function RNPageSwipe:innerNew(o)
 
     o = o or {
         name = "",
-        options = { mode = MOAIEaseType.SMOOTH, rows = 0, columns = 0, offsetX = 0, offsetY = 0, dividerX = 0, dividerY = 0, cellW = 0, cellW = 0, pageW = 0, touchAreaStartingX = 0, touchAreaStartingY = 0, touchAreaW = 0, touchAreaH = 0, time = 0 },
+        options = { touchLength = 100, mode = MOAIEaseType.SMOOTH, rows = 0, columns = 0, offsetX = 0, offsetY = 0, dividerX = 0, dividerY = 0, cellW = 0, cellW = 0, pageW = 0, touchAreaStartingX = 0, touchAreaStartingY = 0, touchAreaW = 0, touchAreaH = 0, time = 0 },
         elements = {},
         pages = 0,
         tempx = 0,
@@ -63,7 +57,7 @@ function RNPageSwipe:innerNew(o)
 end
 
 function RNPageSwipe:init()
-    SELF = self
+    self = self
     --calculates pages
     local eleNumber = table.getn(self.elements)
     local pages = math.modf(eleNumber / (self.options.columns * self.options.rows))
@@ -73,7 +67,85 @@ function RNPageSwipe:init()
     --arranging objects
     self:arrange()
     --touch listener
-    self.touchListener = RNListeners:addEventListener("touch", RNPageSwipe.touchSwipe)
+    self.touch = function(event)
+        local self = self
+        if self.canSwipe == true then
+            if event.x > self.options.touchAreaStartingX and event.x < self.options.touchAreaW + self.options.touchAreaStartingX and event.y > self.options.touchAreaStartingY and event.y < self.options.touchAreaH + self.options.touchAreaStartingY then
+                if event.phase == "began" then
+                    self:callRegisteredFunctions("touchSwipeBegan")
+                    self.tempx = event.x
+                    self.STARTINGX = event.x
+                end
+                if event.phase == "moved" then
+                    self:callRegisteredFunctions("touchSwipeMoved")
+                    self.forcex = (event.x - self.tempx)
+                    self.tempx = event.x
+                    self.isMoving = true
+                    --
+                    --move elements according to touch
+                    for i, v in ipairs(self.elements) do
+                        v.object.x = v.object.x + self.forcex
+                    end
+                    --sets forcex to 0 at the end
+                    self.forcex = 0 --
+                end
+
+                if event.phase == "ended" then
+                    --check current page
+                    if self.STARTINGX ~= nil then
+                        if math.abs(self.STARTINGX - event.x) > self.options.touchLength then
+                            if self.STARTINGX > event.x then
+                                if self.currentPage < self.pages then
+                                    self.currentPage = self.currentPage + 1
+                                end
+                            end
+                            if self.STARTINGX < event.x then
+                                if self.currentPage > 1 then
+                                    self.currentPage = self.currentPage - 1
+                                end
+                            end
+                        end
+                    end
+
+                    self.forcex = 0
+                    self:doSwipe()
+                    self.isMoving = false
+                    --call registered functions
+                    self:callRegisteredFunctions("touchSwipeEnded")
+                end
+
+            else
+                if event.phase == "ended" then
+
+
+                    if self.isMoving == true then
+                        --check current page
+                        if self.STARTINGX ~= nil then
+                            if math.abs(self.STARTINGX - event.x) > self.options.touchLength then
+                                if self.STARTINGX > event.x then
+                                    if self.currentPage < self.pages then
+                                        self.currentPage = self.currentPage + 1
+                                    end
+                                end
+                                if self.STARTINGX < event.x then
+                                    if self.currentPage > 1 then
+                                        self.currentPage = self.currentPage - 1
+                                    end
+                                end
+                            end
+                        end
+
+
+                        self.forceX = 0
+                        self:doSwipe()
+                        self.isMoving = false
+                        self:callRegisteredFunctions("touchSwipeCancelled")
+                    end
+                end
+            end
+        end
+    end
+    self.touchListener = RNListeners:addEventListener("touch", self.touch)
     self.registeredFunctions = {}
     self.canSwipe = true
 end
@@ -99,59 +171,9 @@ function RNPageSwipe:arrange()
 end
 
 
-function RNPageSwipe.touchSwipe(event)
-    local self = SELF
-    if self.canSwipe == true then
-        if event.x > self.options.touchAreaStartingX and event.x < self.options.touchAreaW + self.options.touchAreaStartingX and event.y > self.options.touchAreaStartingY and event.y < self.options.touchAreaH + self.options.touchAreaStartingY then
-            if event.phase == "began" then
-                self:callRegisteredFunctions("touchSwipeBegan")
-                self.tempx = event.x
-            end
-            if event.phase == "moved" then
-                self:callRegisteredFunctions("touchSwipeMoved")
-                self.forcex = (event.x - self.tempx)
-                self.tempx = event.x
-                self.isMoving = true
-                --
-                --move elements according to touch
-                for i, v in ipairs(self.elements) do
-                    v.object.x = v.object.x + self.forcex
-                end
-                --sets forcex to 0 at the end
-                self.forcex = 0
-                --checks the current page
-                for i = 1, self.pages do
-                    local minBorder = self.options.offsetX - i * (self.options.pageW) + self.options.pageW / 2
-                    local maxBorder = self.options.offsetX - (i - 1) * (self.options.pageW) + self.options.pageW / 2
-                    if self.elements[1].object.x < maxBorder and self.elements[1].object.x > minBorder then
-                        self.currentPage = i
-                    end
-                end
-            end
-
-            if event.phase == "ended" then
-                self.forcex = 0
-                self:doSwipe()
-                self.isMoving = false
-                --call registered functions
-                self:callRegisteredFunctions("touchSwipeEnded")
-            end
-
-        else
-            if event.phase == "ended" then
-                if self.isMoving == true then
-                    self.forceX = 0
-                    self:doSwipe()
-                    self.isMoving = false
-                    self:callRegisteredFunctions("touchSwipeCancelled")
-                end
-            end
-        end
-    end
-end
-
 
 function RNPageSwipe:doSwipe()
+    local maxPage = self.pages
     local col = 1
     local row = 1
     local page = 1
@@ -165,8 +187,19 @@ function RNPageSwipe:doSwipe()
             page = page + 1
         end
         local trn = RNTransition:new()
-        if i == 1 then
-            trn:run(v.object, { type = "move", mode = self.options.mode, time = self.options.time, x = self.options.offsetX + self.options.cellW * (col - 1) + self.options.dividerX * (col - 1) + self.options.pageW * (page - 1) - self.options.pageW * (self.currentPage - 1), onComplete = RNPageSwipe.endSwipe })
+        if i == maxPage then
+            trn:run(v.object, {
+                type = "move",
+                mode = self.options.mode,
+                time = self.options.time,
+                x = self.options.offsetX + self.options.cellW * (col - 1) + self.options.dividerX * (col - 1) + self.options.pageW * (page - 1) - self.options.pageW * (self.currentPage - 1),
+                onComplete = function()
+                    if self ~= nil then
+                        self:callRegisteredFunctions("endedSwipe")
+                        self.isMoving = false
+                    end
+                end
+            })
         else
             trn:run(v.object, { type = "move", mode = self.options.mode, time = self.options.time, x = self.options.offsetX + self.options.cellW * (col - 1) + self.options.dividerX * (col - 1) + self.options.pageW * (page - 1) - self.options.pageW * (self.currentPage - 1) })
         end
@@ -174,11 +207,40 @@ function RNPageSwipe:doSwipe()
     end
 end
 
-function RNPageSwipe.endSwipe()
-    if SELF ~= nil then
-        SELF:callRegisteredFunctions("endedSwipe")
-        SELF.isMoving = false
+
+
+function RNPageSwipe:jumpToPage(value)
+    if value ~= self.currentPage then
+        if value <= self.pages then
+            self.currentPage = value
+        else
+            self.currentPage = self.pages
+        end
+        self:doJump()
     end
+    self:endJump()
+end
+
+function RNPageSwipe:doJump()
+    local col = 1
+    local row = 1
+    local page = 1
+    for i, v in ipairs(self.elements) do
+        if col == self.options.columns + 1 then
+            col = 1
+            row = row + 1
+        end
+        if row == self.options.rows + 1 then
+            row = 1
+            page = page + 1
+        end
+        v.object.x = self.options.offsetX + self.options.cellW * (col - 1) + self.options.dividerX * (col - 1) + self.options.pageW * (page - 1) - self.options.pageW * (self.currentPage - 1)
+        col = col + 1
+    end
+end
+
+function RNPageSwipe:endJump()
+    self:callRegisteredFunctions("endedJump")
 end
 
 function RNPageSwipe:registerFunction(funct)
@@ -429,7 +491,7 @@ function RNPageSwipe:remove()
     end
 
     self = nil
-    SELF = nil
+    self = nil
 end
 
 

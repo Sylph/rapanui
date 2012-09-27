@@ -247,11 +247,23 @@ function RNGroup:inserLevel(level)
 end
 
 function RNGroup:getLowestLevel()
-    return math.min(unpack(self.levels))
+    local t = -1
+    for i, v in pairs(self.levels) do
+        if t > v then
+            t = v
+        end
+    end
+    return t
 end
 
 function RNGroup:getHighestLevel()
-    return math.max(unpack(self.levels))
+    local t = -1
+    for i, v in pairs(self.levels) do
+        if t < v then
+            t = v
+        end
+    end
+    return t
 end
 
 function RNGroup:sendToBottom(object)
@@ -299,7 +311,7 @@ function RNGroup:remove()
     end
     self.prop = nil
     self = nil
---    collectgarbage()
+    --    collectgarbage()
 end
 
 
@@ -313,8 +325,16 @@ end
 function RNGroup:setVisible(value)
     for i = 0, self.numChildren - 1 do
         local anObject = self.displayObjects[i]
-        if anObject ~= nil and type(anObject.getProp) ~= "table" and anObject:getProp() ~= nil then
-            anObject.visible = value
+        if anObject ~= nil then
+            if anObject.getType ~= nil then
+                if anObject:getType() ~= "RNButton" then
+                    if anObject ~= nil and type(anObject.getProp) ~= "table" and anObject:getProp() ~= nil then
+                        anObject.visible = value
+                    end
+                else
+                    anObject.visible = value
+                end
+            end
         end
     end
 end
