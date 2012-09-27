@@ -507,15 +507,6 @@ function RNObject:initWithMoaiImage(moaiImage)
     self.prop:setPriority(1)
 end
 
-function RNObject:initWithMoaiProp2D(image)
-    self.name = ""
-    self.prop = image
-    self.prop:setPriority(1)
-    self.originalHeight = image.height
-    self.originalWidth = image.width
-
-    return self
-end
 
 function RNObject:initWithImage2(image)
 
@@ -773,6 +764,8 @@ function RNObject:togglePause()
     end
 end
 
+
+
 function RNObject:play(sequenceName, speed, repeatTimes, onStop)
     self:stop()
     self.currentSequence = nil
@@ -829,6 +822,11 @@ function RNObject:play(sequenceName, speed, repeatTimes, onStop)
     --unset pause
     self.pause = false
 end
+
+
+
+
+
 
 function RNObject:newSequence(name, frameOrder, speed, repeatTimes, onStop)
     if self.isAnim == true then
