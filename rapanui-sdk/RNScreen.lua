@@ -105,8 +105,8 @@ function RNScreen:getObjectWithHighestLevelOn(x, y)
     local ofx = RNFactory.screenXOffset
     local ofy = RNFactory.screenYOffset
 
-    local gx = config.graphicsDesign.w
-    local gy = config.graphicsDesign.h
+    local gx = RNFactory.screenUnitsX
+    local gy = RNFactory.screenUnitsY
     local tx = RNFactory.width
     local ty = RNFactory.height
 
@@ -117,8 +117,6 @@ function RNScreen:getObjectWithHighestLevelOn(x, y)
     --screen aspect calculating offsets
     local AspectX = (gx + ofx * 2 * Ax) / tx
     local AspectY = (gy + ofy * 2 * Ay) / ty
-
-
 
     local props
     if config.stretch == true then

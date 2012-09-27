@@ -50,7 +50,7 @@ function RNFactory.init()
     if screenX ~= nil then --if physical screen
         lwidth, lheight, screenlwidth, screenHeight = screenX, screenY, screenX, screenY
     else
-        lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device][3], config.sizes[config.device][4]
+        lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device][1], config.sizes[config.device][2]
     end
 
     if config.landscape == true and lwidth < lheight then -- flip lwidth and lheight
@@ -58,8 +58,8 @@ function RNFactory.init()
         screenlwidth, screenHeight = screenHeight, screenlwidth
     end
 
-    config.landscape, config.device, config.sizes, screenX, screenY = nil
-
+    screenX, screenY = nil
+    --landscape, device, sizes, = nil  -- What are these disabling?
 
     if name == nil then
         name = "mainwindow"
@@ -86,28 +86,27 @@ function RNFactory.init()
     RNFactory.screenUnitsY = 0
 
     --if we have to stretch graphics to screen
-
     if config.stretch == true then
+
         local SCREEN_UNITS_X, SCREEN_UNITS_Y
         SCREEN_UNITS_X = config.graphicsDesign.w
         SCREEN_UNITS_Y = config.graphicsDesign.h
 
+
+
         local SCREEN_X_OFFSET = 0
         local SCREEN_Y_OFFSET = 0
 
-        local DEVICE_WIDTH, DEVICE_HEIGHT, gameAspect, realAspect
-        DEVICE_WIDTH, DEVICE_HEIGHT = RNFactory.width, RNFactory.height
-
-
+        local DEVICE_WIDTH, DEVICE_HEIGHT = RNFactory.width, RNFactory.height
         local gameAspect = SCREEN_UNITS_Y / SCREEN_UNITS_X
         local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
 
         local SCREEN_WIDTH, SCREEN_HEIGHT
-        if (config.letterBoxClipping ~= true) then
-            if (realAspect > gameAspect) then
-                SCREEN_UNITS_Y = SCREEN_UNITS_X * realAspect
+        if config.letterboxClipping ~= true then
+            if realAspect > gameAspect then
+                SCREEN_UNITS_Y = config.graphicsDesign.w * realAspect
             else
-                SCREEN_UNITS_X = SCREEN_UNITS_Y / realAspect -- There are black bars on the sides
+                SCREEN_UNITS_X = config.graphicsDesign.h / realAspect
             end
 
             SCREEN_WIDTH = DEVICE_WIDTH
@@ -120,32 +119,32 @@ function RNFactory.init()
                 SCREEN_WIDTH = DEVICE_HEIGHT / gameAspect
                 SCREEN_HEIGHT = DEVICE_HEIGHT
             end
-            if SCREEN_WIDTH < DEVICE_WIDTH then
-                SCREEN_X_OFFSET = (DEVICE_WIDTH - SCREEN_WIDTH) * 0.5
-            end
 
+            if SCREEN_WIDTH < DEVICE_WIDTH then
+                SCREEN_X_OFFSET = DEVICE_WIDTH - SCREEN_WIDTH
+            end
             if SCREEN_HEIGHT < DEVICE_HEIGHT then
-                SCREEN_Y_OFFSET = (DEVICE_HEIGHT - SCREEN_HEIGHT) * 0.5
+                SCREEN_Y_OFFSET = DEVICE_HEIGHT - SCREEN_HEIGHT
             end
         end
 
         RNFactory.screen.viewport:setSize(SCREEN_X_OFFSET, SCREEN_Y_OFFSET, SCREEN_X_OFFSET + SCREEN_WIDTH, SCREEN_Y_OFFSET + SCREEN_HEIGHT)
         RNFactory.screen.viewport:setScale(SCREEN_UNITS_X, -SCREEN_UNITS_Y)
 
-        RNFactory.originalWidth = config.graphicsDesign.w
-        RNFactory.originalHeight = config.graphicsDesign.h
-
         RNFactory.outWidth = SCREEN_UNITS_X
         RNFactory.outHeight = SCREEN_UNITS_Y
-
-        RNFactory.letterBoxXOffset = (SCREEN_UNITS_X - config.graphicsDesign.w) * 0.5
-        RNFactory.letterBoxYOffset = (SCREEN_UNITS_Y - config.graphicsDesign.h) * 0.5
 
         RNFactory.screenXOffset = SCREEN_X_OFFSET
         RNFactory.screenYOffset = SCREEN_Y_OFFSET
 
         RNFactory.screenUnitsX = SCREEN_UNITS_X
         RNFactory.screenUnitsY = SCREEN_UNITS_Y
+
+        --Helper vars
+        RNFactory.letterboxWidth = config.graphicsDesign.w
+        RNFactory.letterboxHeight = config.graphicsDesign.h
+        RNFactory.letterboxXOffset = (SCREEN_UNITS_X - RNFactory.letterboxWidth) * 0.5
+        RNFactory.letterboxYOffset = (SCREEN_UNITS_Y - RNFactory.letterboxHeight) * 0.5
     end
 
 
