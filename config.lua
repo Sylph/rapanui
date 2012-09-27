@@ -37,8 +37,8 @@ config.sizes = {
 }
 
 --set landscape mode and device
-config.landscape = (config.sizes[config.device][1] < config.sizes[config.device][2]) -- When true then rotate device screen to landscape.
 config.device = "Auto"
+config.landscape = (config.sizes[config.device][1] < config.sizes[config.device][2]) -- When true then rotate device screen to landscape.
 
 --set stretch and graphics design
 --this will stretch your graphics to fit device screen size
@@ -46,6 +46,16 @@ config.device = "Auto"
 --change values with care if you are on landscape
 config.stretch = true
 config.graphicsDesign = { w = 640, h = 960 }
+
+-- get screenSize if it's rotated
+config.screenSize = {}
+if config.landscape then
+    config.screenSize.w = config.sizes[config.device][2]
+    config.screenSize.h = config.sizes[config.device][1]
+else
+    config.screenSize.w = config.sizes[config.device][1]
+    config.screenSize.h = config.sizes[config.device][2]
+end
 
 --Hacks to eliminate black bars from the side
 config.originalGraphicsDesign = { w = config.graphicsDesign.w, h = config.graphicsDesign.h  }
@@ -57,8 +67,5 @@ else
     config.graphicsDesign.w = config.graphicsDesign.h / realAspect -- There are black bars on the sides
 end
 config.offset = { x = (config.graphicsDesign.w - config.originalGraphicsDesign.w)/2, y = (config.graphicsDesign.h - config.originalGraphicsDesign.h)/2 }
-
-
-
 
 return config
