@@ -202,6 +202,7 @@ function RNButton:setVisible(isVisible)
 
         if self.rnImageDisabled ~= nil then
             self.rnImageDefault:setVisible(false)
+            self.rnImageOver:setVisible(false)
             self.rnImageDisabled:setVisible(false)
         end
     end
