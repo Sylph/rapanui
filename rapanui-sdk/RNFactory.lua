@@ -217,7 +217,6 @@ function RNFactory.createImage(image, params)
         parentGroup = RNFactory.mainGroup
     end
 
-
     local o = RNObject:new()
     local o, deck = o:initWithImage2(image)
 
@@ -395,6 +394,31 @@ function RNFactory.createButton(image, params)
 
 
     return rnButton, deck
+end
+
+function RNFactory.createDeck(image)
+    local deck = image
+    local numberInAtlas
+
+    if type(image) == "string" then
+        if RNGraphicsManager:getAlreadyAllocated(image) then
+            deck, numberInAtlas = RNGraphicsManager:getDeckByPath(image)
+        else
+            deck = RNGraphicsManager:allocateDeck2DGfx(image)
+        end
+    end
+
+    if RNGraphicsManager:getGfxByPath(image).isInAtlas then
+        deck.originalWidth = RNGraphicsManager:getGfxByPath(image).sizes[numberInAtlas].w
+        deck.originalHeight = RNGraphicsManager:getGfxByPath(image).sizes[numberInAtlas].h
+    else
+        deck.originalWidth = RNGraphicsManager:getGfxByPath(image).width
+        deck.originalHeight = RNGraphicsManager:getGfxByPath(image).height
+    end
+
+    if type(image) == "string" then deck.name = image else deck.name = "" end
+
+    return deck, numberInAtlas
 end
 
 function RNFactory.createImageFromMoaiImage(moaiImage, params)
