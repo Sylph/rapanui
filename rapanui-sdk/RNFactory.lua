@@ -102,7 +102,7 @@ function RNFactory.init()
         local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
 
         local SCREEN_WIDTH, SCREEN_HEIGHT
-        if config.letterboxClipping ~= true then
+        if not config.letterboxClipping then
             if realAspect > gameAspect then
                 SCREEN_UNITS_Y = config.graphicsDesign.w * realAspect
             else
