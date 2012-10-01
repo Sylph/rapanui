@@ -38,13 +38,12 @@ config.sizes = {
 --set landscape mode and device
 config.device = "Auto"
 config.landscape = true
-config.letterBoxClipping = true -- Default to false. It enables the black bars on the side when set to true.
 
 --set stretch and graphics design
 --this will stretch your graphics to fit device screen size
 --but you need to set for which sizes your assets are originally designed for
 --change values with care if you are on landscape
-config.stretch = true
+config.stretch = "stretch" --stretch/letterbox -> default to false
 config.graphicsDesign = { w = 640, h = 960 }
 
 --this is for iOS. Set it to true if you enabled the status bar in your Moai xCode Project, to keep screen touch configured properly.
