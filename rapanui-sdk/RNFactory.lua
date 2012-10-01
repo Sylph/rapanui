@@ -121,10 +121,10 @@ function RNFactory.init()
             end
 
             if SCREEN_WIDTH < DEVICE_WIDTH then
-                SCREEN_X_OFFSET = DEVICE_WIDTH - SCREEN_WIDTH
+                SCREEN_X_OFFSET = (DEVICE_WIDTH - SCREEN_WIDTH)*.5
             end
             if SCREEN_HEIGHT < DEVICE_HEIGHT then
-                SCREEN_Y_OFFSET = DEVICE_HEIGHT - SCREEN_HEIGHT
+                SCREEN_Y_OFFSET = (DEVICE_HEIGHT - SCREEN_HEIGHT)*.5
             end
         end
 
@@ -167,8 +167,6 @@ end
 function RNFactory.getCurrentScreen()
     return RNFactory.screen
 end
-
-
 
 function RNFactory.createList(name, params)
     local list = RNListView:new()
