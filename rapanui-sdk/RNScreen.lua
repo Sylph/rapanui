@@ -139,6 +139,8 @@ function RNScreen:getObjectWithHighestLevelOn(x, y)
             local toGetX, toGetY = (x - ofx) * Ax, (y - ofy) * Ay
             props = { self.mainPartition:propListForPoint(toGetX, toGetY + statusBar * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
         end
+    else
+        props = { self.mainPartition:propListForPoint(x, y + statusBar * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
     end
 
     for i, p in ipairs(props) do

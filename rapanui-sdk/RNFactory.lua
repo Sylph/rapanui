@@ -86,6 +86,7 @@ function RNFactory.init()
     RNFactory.screenUnitsY = 0
 
     --if we have to stretch graphics to screen
+
     if config.stretch.status == true then
         if config.stretch.letterbox == true then
             local SCREEN_UNITS_X, SCREEN_UNITS_Y
@@ -101,6 +102,7 @@ function RNFactory.init()
 
             local gameAspect = SCREEN_UNITS_Y / SCREEN_UNITS_X
             local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
+
 
             local SCREEN_WIDTH, SCREEN_HEIGHT
 
@@ -187,6 +189,8 @@ function RNFactory.init()
 		RNFactory.letterboxYOffset = (RNFactory.screenUnitsY - RNFactory.letterboxHeight) * 0.5
     end
 
+
+
     RNInputManager.setGlobalRNScreen(screen)
 end
 
@@ -206,6 +210,8 @@ end
 function RNFactory.getCurrentScreen()
     return RNFactory.screen
 end
+
+
 
 function RNFactory.createList(name, params)
     local list = RNListView:new()
@@ -253,6 +259,7 @@ function RNFactory.createImage(image, params)
     if (parentGroup == nil) then
         parentGroup = RNFactory.mainGroup
     end
+
 
     local o = RNObject:new()
     local o, deck = o:initWithImage2(image)
