@@ -38,23 +38,6 @@ config.sizes = {
 --set landscape mode and device
 config.device = "Auto"
 config.landscape = true
-config.sizes["test3"] = { 100, 500, 100, 500 }
-
-
-
-
-
-
-
-
-
-
-
-
-
---set lanscape mode and device
-config.landscape = false
-config.device = "iPhone3G"
 
 --set stretch and graphics design
 --this will stretch your graphics to fit device screen size
@@ -63,8 +46,6 @@ config.device = "iPhone3G"
 --drawOnBlackBars is to writing on blackBars
 --change values with care if you are on landscape
 config.graphicsDesign = { w = 640, h = 960 }
-
-
 config.stretch = { status = false, letterbox = false, drawOnBlackBars = false, graphicsDesign = { w = 640, h = 960 } }
 
 --this is for iOS. Set it to true if you enabled the status bar in your Moai xCode Project, to keep screen touch configured properly.

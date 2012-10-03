@@ -11,11 +11,8 @@
 -- license based on the Mozilla Public License, with the added requirement that you attribute
 -- Moai (http://getmoai.com/) and RapaNui in the credits of your program.
 --]]
+
 require("rapanui-sdk/rapanui")
-local screenW, screenH, halfW, halfH = config.graphicsDesign.w, config.graphicsDesign.h, config.graphicsDesign.w/2, config.graphicsDesign.h/2
-local screenFW, screenFH, halfFW, halfFH = RNFactory.outWidth, RNFactory.outHeight, RNFactory.outWidth/2, RNFactory.outHeight/2
-local offsetX, offsetY = RNFactory.letterBoxXOffset, RNFactory.letterBoxYOffset
-RNFactory.createRect(0, 0, screenFW, screenFH, { rgb = { 55, 0, 0 } })
 
 --[[ Uncomment to override the default print() function
 function print(...)

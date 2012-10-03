@@ -102,6 +102,7 @@ end
 
 function RNScreen:getObjectWithHighestLevelOn(x, y)
 
+
     local ofx = RNFactory.screenXOffset
     local ofy = RNFactory.screenYOffset
 
@@ -130,7 +131,6 @@ function RNScreen:getObjectWithHighestLevelOn(x, y)
       ]]
 
     local props
-
     if config.stretch.status == true then
         if config.stretch.letterbox == true then
             local toGetX, toGetY = (x - ofx) * Ax, (y - ofy) * Ay
@@ -139,11 +139,6 @@ function RNScreen:getObjectWithHighestLevelOn(x, y)
             local toGetX, toGetY = (x - ofx) * Ax, (y - ofy) * Ay
             props = { self.mainPartition:propListForPoint(toGetX, toGetY + statusBar * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
         end
-    if config.stretch == "stretch" or config.stretch == "letterbox" then
-        local toGetX, toGetY = (x - ofx) * Ax, (y - ofy) * Ay
-        --        print(x, y, toGetX, toGetY)
-        props = { self.mainPartition:propListForPoint(toGetX, toGetY, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
-    else        props = { self.mainPartition:propListForPoint(x, y + statusBar * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
     end
 
     for i, p in ipairs(props) do
