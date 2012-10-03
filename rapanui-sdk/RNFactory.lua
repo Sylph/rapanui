@@ -58,8 +58,8 @@ function RNFactory.init()
         screenlwidth, screenHeight = screenHeight, screenlwidth
     end
 
-    screenX, screenY = nil
-    --landscape, device, sizes, = nil  -- What are these disabling?
+    landscape, device, sizes, screenX, screenY = nil
+
 
     if name == nil then
         name = "mainwindow"
@@ -102,7 +102,6 @@ function RNFactory.init()
             local gameAspect = SCREEN_UNITS_Y / SCREEN_UNITS_X
             local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
 
-
             local SCREEN_WIDTH, SCREEN_HEIGHT
 
             if config.stretch.drawOnBlackBars then
@@ -135,7 +134,6 @@ function RNFactory.init()
 
 
             RNFactory.screen.viewport:setSize(SCREEN_X_OFFSET, SCREEN_Y_OFFSET, SCREEN_X_OFFSET + SCREEN_WIDTH, SCREEN_Y_OFFSET + SCREEN_HEIGHT)
-            --TODO:
             RNFactory.screen.viewport:setScale(SCREEN_UNITS_X, -SCREEN_UNITS_Y)
 
             RNFactory.outWidth = config.stretch.graphicsDesign.w
