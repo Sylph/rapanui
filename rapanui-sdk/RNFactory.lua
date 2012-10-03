@@ -50,7 +50,7 @@ function RNFactory.init()
     if screenX ~= nil then --if physical screen
         lwidth, lheight, screenlwidth, screenHeight = screenX, screenY, screenX, screenY
     else
-        lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device][1], config.sizes[config.device][2]
+        lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device]31], config.sizes[config.device][4]
     end
 
     if config.landscape == true and lwidth < lheight then -- flip lwidth and lheight
