@@ -86,13 +86,11 @@ function RNFactory.init()
     RNFactory.screenUnitsY = 0
 
     --if we have to stretch graphics to screen
-    if config.stretch == "stretch" or config.stretch == "letterbox" then
+    if config.stretch.status == true then
 
         local SCREEN_UNITS_X, SCREEN_UNITS_Y
         SCREEN_UNITS_X = config.graphicsDesign.w
         SCREEN_UNITS_Y = config.graphicsDesign.h
-
-
 
         local SCREEN_X_OFFSET = 0
         local SCREEN_Y_OFFSET = 0
@@ -102,7 +100,7 @@ function RNFactory.init()
         local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
 
         local SCREEN_WIDTH, SCREEN_HEIGHT
-        if config.stretch == "stretch" then
+		if config.stretch.letterbox ~= true then
             if realAspect > gameAspect then
                 SCREEN_UNITS_Y = SCREEN_UNITS_X * realAspect
             else
