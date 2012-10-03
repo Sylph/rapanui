@@ -50,7 +50,7 @@ function RNFactory.init()
     if screenX ~= nil then --if physical screen
         lwidth, lheight, screenlwidth, screenHeight = screenX, screenY, screenX, screenY
     else
-        lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device]31], config.sizes[config.device][4]
+        lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device][3], config.sizes[config.device][4]
     end
 
     if config.landscape == true and lwidth < lheight then -- flip lwidth and lheight
@@ -185,8 +185,8 @@ function RNFactory.init()
 		--Helper vars
         RNFactory.letterboxWidth = config.stretch.graphicsDesign.w
 		RNFactory.letterboxHeight = config.stretch.graphicsDesign.h
-		RNFactory.letterboxXOffset = (RNFactory.screenUnitsX - RNFactory.letterboxWidth) * 0.5
-		RNFactory.letterboxYOffset = (RNFactory.screenUnitsY - RNFactory.letterboxHeight) * 0.5
+		RNFactory.letterboxXOffset = (RNFactory.screenUnitsX - RNFactory.letterboxWidth or RNFactory.screenUnitsX) * 0.5
+		RNFactory.letterboxYOffset = (RNFactory.screenUnitsY - RNFactory.letterboxHeight or RNFactory.screenUnitsY) * 0.5
     end
 
 
