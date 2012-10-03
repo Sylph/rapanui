@@ -45,7 +45,6 @@ config.landscape = true
 --letterbox is to enable letterboxing
 --drawOnBlackBars is to writing on blackBars
 --change values with care if you are on landscape
-config.graphicsDesign = { w = 640, h = 960 }
 config.stretch = { status = false, letterbox = false, drawOnBlackBars = false, graphicsDesign = { w = 640, h = 960 } }
 
 --this is for iOS. Set it to true if you enabled the status bar in your Moai xCode Project, to keep screen touch configured properly.

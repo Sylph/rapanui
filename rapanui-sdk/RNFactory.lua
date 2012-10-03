@@ -87,29 +87,80 @@ function RNFactory.init()
 
     --if we have to stretch graphics to screen
     if config.stretch.status == true then
+        if config.stretch.letterbox == true then
+            local SCREEN_UNITS_X, SCREEN_UNITS_Y
+            SCREEN_UNITS_X = config.stretch.graphicsDesign.w
+            SCREEN_UNITS_Y = config.stretch.graphicsDesign.h
 
-        local SCREEN_UNITS_X, SCREEN_UNITS_Y
-        SCREEN_UNITS_X = config.graphicsDesign.w
-        SCREEN_UNITS_Y = config.graphicsDesign.h
+            local SCREEN_X_OFFSET = 0
+            local SCREEN_Y_OFFSET = 0
 
-        local SCREEN_X_OFFSET = 0
-        local SCREEN_Y_OFFSET = 0
+            local DEVICE_WIDTH, DEVICE_HEIGHT, gameAspect, realAspect
+            DEVICE_WIDTH, DEVICE_HEIGHT = RNFactory.width, RNFactory.height
 
-        local DEVICE_WIDTH, DEVICE_HEIGHT = RNFactory.width, RNFactory.height
-        local gameAspect = SCREEN_UNITS_Y / SCREEN_UNITS_X
-        local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
 
-        local SCREEN_WIDTH, SCREEN_HEIGHT
-		if config.stretch.letterbox ~= true then
-            if realAspect > gameAspect then
-                SCREEN_UNITS_Y = SCREEN_UNITS_X * realAspect
+            local gameAspect = SCREEN_UNITS_Y / SCREEN_UNITS_X
+            local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
+
+
+            local SCREEN_WIDTH, SCREEN_HEIGHT
+
+            if config.stretch.drawOnBlackBars then
+                if realAspect > gameAspect then
+                    SCREEN_UNITS_Y = SCREEN_UNITS_X * realAspect
+                else
+                    SCREEN_UNITS_X = SCREEN_UNITS_Y / realAspect
+                end
+
+                SCREEN_WIDTH = DEVICE_WIDTH
+                SCREEN_HEIGHT = DEVICE_HEIGHT
             else
-                SCREEN_UNITS_X = SCREEN_UNITS_Y / realAspect
+
+                if realAspect > gameAspect then
+                    SCREEN_WIDTH = DEVICE_WIDTH
+                    SCREEN_HEIGHT = DEVICE_WIDTH * gameAspect
+                else
+                    SCREEN_WIDTH = DEVICE_HEIGHT / gameAspect
+                    SCREEN_HEIGHT = DEVICE_HEIGHT
+                end
+
+                if SCREEN_WIDTH < DEVICE_WIDTH then
+                    SCREEN_X_OFFSET = (DEVICE_WIDTH - SCREEN_WIDTH) * 0.5
+                end
+
+                if SCREEN_HEIGHT < DEVICE_HEIGHT then
+                    SCREEN_Y_OFFSET = (DEVICE_HEIGHT - SCREEN_HEIGHT) * 0.5
+                end
             end
 
-            SCREEN_WIDTH = DEVICE_WIDTH
-            SCREEN_HEIGHT = DEVICE_HEIGHT
+
+            RNFactory.screen.viewport:setSize(SCREEN_X_OFFSET, SCREEN_Y_OFFSET, SCREEN_X_OFFSET + SCREEN_WIDTH, SCREEN_Y_OFFSET + SCREEN_HEIGHT)
+            --TODO:
+            RNFactory.screen.viewport:setScale(SCREEN_UNITS_X, -SCREEN_UNITS_Y)
+
+            RNFactory.outWidth = config.stretch.graphicsDesign.w
+            RNFactory.outHeight = config.stretch.graphicsDesign.h
+
+            RNFactory.screenXOffset = SCREEN_X_OFFSET
+            RNFactory.screenYOffset = SCREEN_Y_OFFSET
+
+            RNFactory.screenUnitsX = SCREEN_UNITS_X
+            RNFactory.screenUnitsY = SCREEN_UNITS_Y
         else
+            local SCREEN_UNITS_X, SCREEN_UNITS_Y
+            SCREEN_UNITS_X = config.stretch.graphicsDesign.w
+            SCREEN_UNITS_Y = config.stretch.graphicsDesign.h
+
+            local DEVICE_WIDTH, DEVICE_HEIGHT, gameAspect, realAspect
+            DEVICE_WIDTH, DEVICE_HEIGHT = RNFactory.width, RNFactory.height
+
+
+            local gameAspect = SCREEN_UNITS_Y / SCREEN_UNITS_X
+            local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
+
+
+            local SCREEN_WIDTH, SCREEN_HEIGHT
+
             if realAspect > gameAspect then
                 SCREEN_WIDTH = DEVICE_WIDTH
                 SCREEN_HEIGHT = DEVICE_WIDTH * gameAspect
@@ -118,33 +169,25 @@ function RNFactory.init()
                 SCREEN_HEIGHT = DEVICE_HEIGHT
             end
 
-            if SCREEN_WIDTH < DEVICE_WIDTH then
-                SCREEN_X_OFFSET = (DEVICE_WIDTH - SCREEN_WIDTH)*.5
-            end
-            if SCREEN_HEIGHT < DEVICE_HEIGHT then
-                SCREEN_Y_OFFSET = (DEVICE_HEIGHT - SCREEN_HEIGHT)*.5
-            end
+
+            RNFactory.screen.viewport:setSize(0, 0, RNFactory.width, RNFactory.height)
+            RNFactory.screen.viewport:setScale(SCREEN_UNITS_X, -SCREEN_UNITS_Y)
+
+            RNFactory.outWidth = config.stretch.graphicsDesign.w
+            RNFactory.outHeight = config.stretch.graphicsDesign.h
+
+            RNFactory.screenXOffset = 0
+            RNFactory.screenYOffset = 0
+
+            RNFactory.screenUnitsX = SCREEN_UNITS_X
+            RNFactory.screenUnitsY = SCREEN_UNITS_Y
         end
-
-        RNFactory.screen.viewport:setSize(SCREEN_X_OFFSET, SCREEN_Y_OFFSET, SCREEN_X_OFFSET + SCREEN_WIDTH, SCREEN_Y_OFFSET + SCREEN_HEIGHT)
-        RNFactory.screen.viewport:setScale(SCREEN_UNITS_X, -SCREEN_UNITS_Y)
-
-        RNFactory.outWidth = SCREEN_UNITS_X
-        RNFactory.outHeight = SCREEN_UNITS_Y
-
-        RNFactory.screenXOffset = SCREEN_X_OFFSET
-        RNFactory.screenYOffset = SCREEN_Y_OFFSET
-
-        RNFactory.screenUnitsX = SCREEN_UNITS_X
-        RNFactory.screenUnitsY = SCREEN_UNITS_Y
-
-        --Helper vars
-        RNFactory.letterboxWidth = config.graphicsDesign.w
-        RNFactory.letterboxHeight = config.graphicsDesign.h
-        RNFactory.letterboxXOffset = (SCREEN_UNITS_X - RNFactory.letterboxWidth) * 0.5
-        RNFactory.letterboxYOffset = (SCREEN_UNITS_Y - RNFactory.letterboxHeight) * 0.5
+		--Helper vars
+        RNFactory.letterboxWidth = config.stretch.graphicsDesign.w
+		RNFactory.letterboxHeight = config.stretch.graphicsDesign.h
+		RNFactory.letterboxXOffset = (RNFactory.screenUnitsX - RNFactory.letterboxWidth) * 0.5
+		RNFactory.letterboxYOffset = (RNFactory.screenUnitsY - RNFactory.letterboxHeight) * 0.5
     end
-
 
     RNInputManager.setGlobalRNScreen(screen)
 end
