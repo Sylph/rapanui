@@ -189,9 +189,43 @@ function RNFactory.init()
 		RNFactory.letterboxYOffset = (RNFactory.screenUnitsY - RNFactory.letterboxHeight or RNFactory.screenUnitsY) * 0.5
     end
 
+    RNFactory.calculateTouchValues()
+
 
 
     RNInputManager.setGlobalRNScreen(screen)
+end
+
+function RNFactory.calculateTouchValues()
+
+
+    local ofx = RNFactory.screenXOffset
+    local ofy = RNFactory.screenYOffset
+
+    local gx = RNFactory.screenUnitsX
+    local gy = RNFactory.screenUnitsY
+    local tx = RNFactory.width
+    local ty = RNFactory.height
+
+    --screen aspect without calculating offsets
+    local Ax = gx / (tx - ofx * 2)
+    local Ay = gy / (ty - ofy * 2)
+
+    local statusBar = 0
+
+    if config.iosStatusBar then
+        if MOAIEnvironment.iosRetinaDisplay then
+            statusBar = 40
+        else
+            statusBar = 20
+        end
+    end
+
+    RNFactory.statusBarHeight = statusBar
+    RNFactory.ofx = ofx
+    RNFactory.ofy = ofy
+    RNFactory.Ax = Ax
+    RNFactory.Ay = Ay
 end
 
 -- extra method call to setup the underlying system
@@ -327,14 +361,14 @@ function RNFactory.createButton(image, params)
         end
 
         --[[
-        if (params.height ~= nil) then
-            height = params.height
-        end
+      if (params.height ~= nil) then
+          height = params.height
+      end
 
-        if (params.width ~= nil) then
-            width = params.width
-        end
-          ]] --
+      if (params.width ~= nil) then
+          width = params.width
+      end
+        ]] --
 
         if (params.verticalAlignment ~= nil) then
             vAlignment = params.verticalAlignment
@@ -610,12 +644,12 @@ end
 function RNFactory.createBitmapText(text, params)
 
     --[[ params.image
-    params.charset
-    params.top
-    params.left
-    params.letterWidth
-    params.letterHeight
-         ]]
+params.charset
+params.top
+params.left
+params.letterWidth
+params.letterHeight
+    ]]
 
     local charcodes, endsizex, sizey, sizex, left, top, scaleX, scaleY, charWidth, charHeight, image, parentGroup
 
