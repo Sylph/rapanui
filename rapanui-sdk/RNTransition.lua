@@ -256,13 +256,13 @@ function RNTransition:run(target, params)
         action:setListener(MOAIAction.EVENT_STOP, function() self.updateMapLoc(self, target, toX, toY, deltax, deltay) end)
     end
 
-    self.action = action
+    --self.action = action
     return action
 end
 
-function RNTransition:stop()
-    if (self.action and self.action:isActive()) then self.action:stop() end
-end
+--function RNTransition:stop()
+    --if (self.action and self.action:isActive()) then self.action:stop() end
+--end
 
 function RNTransition:updateMapLoc(target, x, y, deltax, deltay)
     -- if the target is a RNMap or a RNGroup with a RNMap inside we need to upate the x,y location.
