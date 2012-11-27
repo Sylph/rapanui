@@ -18,11 +18,20 @@ RNPhysics.start()
 
 --global vars
 canMove = false
-lastx = 0
 moaisDestroyed = 0
 shots = 0
 startX = 0
 startY = 0
+-- we need to set cameras Y coordinate and 
+-- create a cameraXOffset since viewport:setOffset(-1, 1) -> left top corner
+cameraY = 0
+cameraXOffset = -64-32
+--button offset is needed to keep the button in correct position with the camera
+buttonOffset = 160
+
+--camera
+camera = MOAICamera2D.new ()
+RNFactory.screen.layer:setCamera(camera)
 
 dog = nil
 label = nil
@@ -53,7 +62,7 @@ bounding.visible = false
 
 --local collision handling of moais objects
 function onMoaiCollide(self, event)
-    if (event.phase == "begin") and (dog.x - gameGroup.x > 1000) then
+    if (event.phase == "begin") and (dog.x > 1000) then
         if self.frame < 4 then
             self.frame = self.frame + 1
         else
@@ -68,10 +77,12 @@ end
 function create_level()
     --creating dog
     dog = RNFactory.createImage("rapanui-samples/games/AngryDogsAgainstMoais/dog.png"); dog.x = 100; dog.y = 400;
-    RNPhysics.createBodyFromImage(dog, { shape = "circle", restitution = 0.4 })
+    local dogBody = RNPhysics.createBodyFromImage(dog, { shape = "circle", restitution = 0.4 })
+    dogBody:setLinearDamping(0.3)      --diminishing speed
+    dogBody:setAngularDamping(0.3)
+
     gameGroup:insert(dog)
     dog.name = "dog"
-    lastx = dog.x
     --starting obstacle
     local obstacle = RNFactory.createImage("rapanui-samples/games/AngryDogsAgainstMoais/obstacle.png");
     obstacle.x = 100; obstacle.y = 500; obstacle.rotation = 90
@@ -126,7 +137,6 @@ end
 
 
 
-
 --handling touch
 function screen_touch(event)
     local xx = event.x
@@ -169,43 +179,24 @@ RNListeners:addEventListener("touch", screen_touch)
 
 --handling enterFrame
 function Step()
-    --diminishing speed
-    if dog.linearVelocityX > 0 then
-        dog.linearVelocityX = dog.linearVelocityX - 0.2
-    end
-    if dog.linearVelocityY > 0 then
-        dog.linearVelocityY = dog.linearVelocityY - 0.2
-    end
-    if dog.linearVelocityX < 0 then
-        dog.linearVelocityX = dog.linearVelocityX + 0.2
-    end
-    if dog.linearVelocityY < 0 then
-        dog.linearVelocityY = dog.linearVelocityY + 0.2
-    end
-    if dog.angularVelocity > 0 then
-        dog.angularVelocity = dog.angularVelocity - 0.2
-    end
-    if dog.angularVelocity < 0 then
-        dog.angularVelocity = dog.angularVelocity + 0.2
-    end
     --toggle movement possibility
-    if dog.linearVelocityX > -0.1 and dog.linearVelocityX < 0.1 and dog.linearVelocityY > -0.1 and dog.linearVelocityY < 0.1 then
+    if math.abs(dog.linearVelocityX) < 0.2 and math.abs(dog.linearVelocityY) < 0.2 then
         canMove = true
     else
         canMove = false
     end
 
     --Restart and camera setting
-    if dog.x - gameGroup.x > 2500 then
+    if dog.x > 2500 then
         relocateBall()
     else
-        if dog.x - gameGroup.x > 200 and canMove == true then
+        if (dog.x > 110 or dog.x < 90) and canMove == true then
             relocateBall()
         else
-            if dog.x - gameGroup.x < 2200 then
-                local deltax = dog.x - lastx
-                gameGroup.x = gameGroup.x - deltax
-                lastx = dog.x
+            if dog.x  < 2200 then
+				camera:setLoc(dog.x+cameraXOffset,cameraY)
+				local camx,camy=camera:getLoc()
+				button.x = buttonOffset + camx 
             end
         end
     end
@@ -221,14 +212,13 @@ RNListeners:addEventListener("enterFrame", Step)
 
 --bring the ball back to start
 function relocateBall()
-    gameGroup.x = 0
     dog.x = 100
     dog.y = 400
-    gameGroup.x = 0; gameGroup.y = 0;
     dog.rotation = 0
     dog.linearVelocityX = 0
     dog.linearVelocityY = 0
     dog.angularVelocity = 0
+	camera:setLoc(cameraXOffset,cameraY)
 end
 
 
@@ -260,4 +250,3 @@ end
 
 --create starting level
 create_level()
- 
