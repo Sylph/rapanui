@@ -123,7 +123,7 @@ end      --]]
 --require("rapanui-samples/touch/rn-touch-rnobject")
 --require("rapanui-samples/touch/rn-touch-buttons-globaleventlistener")
 --require("rapanui-samples/touch/rn-touch-global-rnobject")
---require("rapanui-samples/touch/rn-buttons-animated")
+require("rapanui-samples/touch/rn-buttons-animated")
 --require("rapanui-samples/touch/rn-touch-buttons-untouchable")
 
 -- listeners
@@ -180,7 +180,7 @@ end      --]]
 -- Scissor rectangles
 --require("rapanui-samples/contribution/rnobject-scissorrect")
 --require("rapanui-samples/contribution/rnmap-scissorrect")
-require("rapanui-samples/contribution/rntext-scissorrect")
+--require("rapanui-samples/contribution/rntext-scissorrect")
 --require("rapanui-samples/contribution/rnbitmaptext-scissorrect")
 --require("rapanui-samples/contribution/rnbutton-scissorrect")
 --require("rapanui-samples/contribution/rngroup-scissorrect")
