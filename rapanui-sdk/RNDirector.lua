@@ -105,13 +105,13 @@ function RNDirector:showScene(name, effect, onEndListener)
     if TRANSITIONING == false then
         TRANSITIONING = true
         if effect == "slidetoleft" then
-            self:slideout(RNFactory.outWidth + 2*RNFactory.letterboxXOffset or 0, 0)
-        elseif effect == "slidetoright" then
-            self:slideout(-RNFactory.outWidth - 2*RNFactory.letterboxXOffset or 0, 0)
+            self:slideout(RNFactory.screenUnitsX, 0)
+        elseif effect == "slidetoright" then                                                        /
+            self:slideout(-RNFactory.screenUnitsX, 0)
         elseif effect == "slidetotop" then
-            self:slideout(0, RNFactory.outHeight + 2*RNFactory.letterboxYOffset or 0)
+            self:slideout(0, RNFactory.screenUnitsY )
         elseif effect == "slidetobottom" then
-            self:slideout(0, -RNFactory.outHeight - 2*RNFactory.letterboxYOffset or 0)
+            self:slideout(0, -RNFactory.screenUnitsY)
         elseif effect == "pop" then
             self:popIn()
         elseif effect == "fade" then
