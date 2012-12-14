@@ -106,7 +106,7 @@ function RNDirector:showScene(name, effect, onEndListener)
         TRANSITIONING = true
         if effect == "slidetoleft" then
             self:slideout(RNFactory.screenUnitsX, 0)
-        elseif effect == "slidetoright" then                                                        /
+        elseif effect == "slidetoright" then
             self:slideout(-RNFactory.screenUnitsX, 0)
         elseif effect == "slidetotop" then
             self:slideout(0, RNFactory.screenUnitsY )
