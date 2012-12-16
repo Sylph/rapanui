@@ -65,8 +65,13 @@ function RNFactory.init()
     end
 
     --  lwidth, lheight from the SDConfig.lua
-
     MOAISim.openWindow(name, screenlwidth, screenHeight)
+    print ("        GFX Device View Size: ", MOAIGfxDevice.getViewSize())
+
+    --TODO: fix the following 2 lines temporary hax
+    lwidth, lheight = MOAIGfxDevice.getViewSize()
+    screenlwidth, screenHeight = lwidth, lheight
+
     RNFactory.screen:initWith(lwidth, lheight, screenlwidth, screenHeight)
 
     RNFactory.width = lwidth
