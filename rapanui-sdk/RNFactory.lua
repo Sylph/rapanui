@@ -42,11 +42,10 @@ RNFactory.width = 0
 RNFactory.height = 0
 
 function RNFactory.init()
-
     local lwidth, lheight, screenlwidth, screenHeight
-    local screenX, screenY = MOAIEnvironment.screenWidth, MOAIEnvironment.screenHeight
+    local screenX, screenY = MOAIGfxDevice.getViewSize()
 
-    if screenX ~= nil then --if physical screen
+    if screenX ~= 0 then
         lwidth, lheight, screenlwidth, screenHeight = screenX, screenY, screenX, screenY
     else
         lwidth, lheight, screenlwidth, screenHeight = config.sizes[config.device][1], config.sizes[config.device][2], config.sizes[config.device][3], config.sizes[config.device][4]
@@ -57,20 +56,12 @@ function RNFactory.init()
         screenlwidth, screenHeight = screenHeight, screenlwidth
     end
 
-    screenX, screenY = nil
-
     local name = rawget(_G, 'name') -- looking for *global* 'name'
     if name == nil then
         name = "mainwindow"
     end
 
-    --  lwidth, lheight from the SDConfig.lua
     MOAISim.openWindow(name, screenlwidth, screenHeight)
-    print ("        GFX Device View Size: ", MOAIGfxDevice.getViewSize())
-
-    --TODO: fix the following 2 lines temporary hax
-    lwidth, lheight = MOAIGfxDevice.getViewSize()
-    screenlwidth, screenHeight = lwidth, lheight
 
     RNFactory.screen:initWith(lwidth, lheight, screenlwidth, screenHeight)
 
@@ -102,7 +93,6 @@ function RNFactory.init()
 
             local DEVICE_WIDTH, DEVICE_HEIGHT, gameAspect, realAspect
             DEVICE_WIDTH, DEVICE_HEIGHT = RNFactory.width, RNFactory.height
-
 
             local gameAspect = SCREEN_UNITS_Y / SCREEN_UNITS_X
             local realAspect = DEVICE_HEIGHT / DEVICE_WIDTH
@@ -821,6 +811,29 @@ function RNFactory.createTextFrom(text, layer, params, putOnScreen)
     return rntext, gFont
 end
 
+function RNFactory.createLine(x1, y1, x2, y2, params)
+    local parentGroup, top, left
+    local rgb = { 255, 255, 255 }
+    local alpha = 1
+
+    if params then
+        parentGroup = params.parentGroup or RNFactory.mainGroups
+        rgb = params.rgb or rgb
+        alpha = params.alpha or alpha
+    end
+
+    local shape = RNObject:new()
+    shape:initWithLine(x1, y1, x2, y2, rgb, alpha)
+    RNFactory.screen:addRNObject(shape)
+    shape.x = math.min(x1, x2)
+    shape.y = math.min(y1, y2)
+    shape.rotation = 0
+
+    if parentGroup ~= nil then
+        parentGroup:insert(shape)
+    end
+    return shape
+end
 
 function RNFactory.createRect(x, y, width, height, params)
     local parentGroup, top, left

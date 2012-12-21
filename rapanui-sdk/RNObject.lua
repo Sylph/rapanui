@@ -624,6 +624,14 @@ function RNObject:initWithRect(width, height, rgb)
 end
 
 
+function RNObject:initWithLine(x1, x2, y1, y2, rgb, alpha)
+    self.visible = true
+    self.childrenSize = 0
+    self.alpha = alpha or 1
+    self:loadLine(x1, x2, y1, y2, rgb, alpha)
+end
+
+
 function RNObject:initWithCircle(x, y, r, rgb)
     self.visible = true
     self.childrenSize = 0
@@ -647,6 +655,30 @@ function RNObject:loadRect(width, height, rgb)
 
     self.gfxQuad = MOAIScriptDeck.new()
     self.gfxQuad:setRect(-x, -y, x, y)
+    self.gfxQuad:setDrawCallback(onDraw)
+
+    self.originalWidth, self.originalHeight = width, height
+
+    self.prop = MOAIProp2D.new()
+
+    self.prop:setDeck(self.gfxQuad)
+
+    self.prop:setPriority(1)
+end
+
+function RNObject:loadLine(x1, y1, x2, y2, rgb, alpha)
+    self.name = "shape"
+    local width, height = math.abs(x1-x2), math.abs(y1-y2)
+
+    self.shapeR, self.shapeG, self.shapeB = rgb[1] * 0.00392, rgb[2] * 0.00392, rgb[3] * 0.00392
+
+    local function onDraw()
+        MOAIGfxDevice.setPenColor(self.shapeR, self.shapeG, self.shapeB, self.alpha)
+        MOAIDraw.drawLine(0, 0, x2-x1, y2-y1)
+    end
+
+    self.gfxQuad = MOAIScriptDeck.new()
+    self.gfxQuad:setRect(-.5*width, -.5*height, .5*width, .5*height)
     self.gfxQuad:setDrawCallback(onDraw)
 
     self.originalWidth, self.originalHeight = width, height
