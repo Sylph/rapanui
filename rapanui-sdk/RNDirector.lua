@@ -162,8 +162,23 @@ function RNDirector:slideout(xx, yy)
 
     --start slide
     if CURRENT_SCENE_GROUP ~= nil then
-        if CURRENT_SCENE_GROUP.scissorRect then
-            CURRENT_SCENE_GROUP.scissorRect:moveLoc(-xx, -yy, 0, 0.001*TIME, MOAIEaseType.SMOOTH)
+        local groupArray = { CURRENT_SCENE_GROUP }
+        local movedScissorRectArray = {}
+        local groupIndex = 1
+        while groupArray[groupIndex] do
+            local displayObjects = groupArray[groupIndex].displayObjects
+            for i = 1, table.getn(displayObjects), 1 do
+                local displayObject = groupArray[groupIndex].displayObjects[i]
+                if displayObject.scissorRect and movedScissorRectArray[displayObject.scissorRect] == nil then
+                    displayObject.scissorRect:moveLoc(-xx, -yy, 0, 0.001*TIME, MOAIEaseType.SMOOTH)
+                    movedScissorRectArray[displayObject.scissorRect] = true
+                end
+
+                if displayObject:getType() == "RNGroup" then
+                    groupArray[#groupArray+1] = displayObject
+                end
+            end
+            groupIndex = groupIndex + 1
         end
 
         for i = 1, table.getn(CURRENT_SCENE_GROUP.displayObjects), 1 do

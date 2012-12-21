@@ -346,7 +346,7 @@ function RNGroup:setScissorRect(scissorRect)
     if self.displayObjects == nil then return end
 
     for i = 1, #self.displayObjects do
-        if self.displayObjects[i].setScissorRect then self.displayObjects[i]:setScissorRect(self.scissorRect) end
+        if self.displayObjects[i].setScissorRect and not self.displayObjects[i].scissorRect then self.displayObjects[i]:setScissorRect(self.scissorRect) end
     end
 end
 
