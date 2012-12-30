@@ -186,11 +186,12 @@ end
 
 function RNText:setVisible(value)
     --NOTE: this is a workaround becouse MOAI's setVisible has a bug.
-
     if value then
         self:setAlpha(1)
+        if self.textbox then self.textbox:setVisible(true) end
     else
         self:setAlpha(0)
+        if self.textbox then self.textbox:setVisible(false) end
     end
 end
 

@@ -48,9 +48,9 @@ end      --]]
 --require("rapanui-samples/bitmaptext/rn-bitmaptext-settext")
 
 -- Lists
---require("rapanui-samples/lists/rn-rnListView")
+require("rapanui-samples/lists/rn-rnListView")
 --require("rapanui-samples/lists/rn-rnListView-multilist")
-require("rapanui-samples/lists/rn-rnPageSwipe")
+--require("rapanui-samples/lists/rn-rnPageSwipe")
 --require("rapanui-samples/lists/rn-rnPageSwipe-multiswipe")
 
 -- Menu

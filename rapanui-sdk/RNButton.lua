@@ -168,6 +168,8 @@ function RNButton:disable()
 
     if self.rnImageDisabled ~= nil then
         self.rnImageDefault:setVisible(false)
+        self.rnImageDefault:setTouchable(false)
+        if self.rnImageOver then self.rnImageOver:setVisible(false) end
         self.rnImageDisabled:setVisible(true)
     end
 end
@@ -176,6 +178,8 @@ function RNButton:enable()
     self.enabled = true
     if self.rnImageDisabled ~= nil then
         self.rnImageDefault:setVisible(true)
+        self.rnImageDefault:setTouchable(true)
+        if self.rnImageOver then self.rnImageOver:setVisible(false) end
         self.rnImageDisabled:setVisible(false)
     end
 end
@@ -194,6 +198,7 @@ function RNButton:setVisible(isVisible)
         else
             self:disable();
         end
+        self.rnImageDefault:setTouchable(true)
     else
 
         if self.text ~= nil then
@@ -204,10 +209,14 @@ function RNButton:setVisible(isVisible)
             self.rnImageDefault:setVisible(false)
             self.rnImageOver:setVisible(false)
             self.rnImageDisabled:setVisible(false)
+            self.rnImageDefault:setTouchable(false)
         end
     end
 end
 
+function RNButton:setTouchable(bool)
+    self.rnImageDefault:setTouchable(bool)
+end
 
 function RNButton:getType()
     return "RNButton"

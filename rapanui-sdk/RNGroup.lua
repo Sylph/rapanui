@@ -325,8 +325,7 @@ end
 
 
 function RNGroup:setVisible(value)
-    for i = 0, self.numChildren - 1 do
-        local anObject = self.displayObjects[i]
+    for i, anObject in ipairs(self.displayObjects) do
         if anObject ~= nil then
             if anObject.getType ~= nil then
                 if anObject:getType() ~= "RNButton" then
@@ -334,7 +333,8 @@ function RNGroup:setVisible(value)
                         anObject.visible = value
                     end
                 else
-                    anObject.visible = value
+                    anObject:setVisible(value)
+                    anObject.visible = false
                 end
             end
         end
